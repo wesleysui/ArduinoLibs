@@ -6,10 +6,8 @@
 
 PlainProtocol myBLUNO(Serial,115200);
 
-//  CS 
-//  SO
-//  SCK
-MAX6675 temp0(11,12,10,1);
+//  CS SO SCK
+MAX6675 max6675(12,13,11,1);
 
 float temperature = 0.0f;
 
@@ -25,9 +23,14 @@ void loop() {
         }
 	}
 
-	myBLUNO.write("TEMP", temperature);//
-	temperature = temp0.read_temp();
-	// Serial.println(temperature);
-	delay(1000);
+	static unsigned long max6675Timer = millis();       //every 2s update the temperature and humidity from DHT11 sensor
+    if (millis() - max6675Timer >= 2000) {
+        max6675Timer = millis();
+        temperature = max6675.read_temp();
+        Serial.println(temperature);
+    }
+
+
+    delay(1000);
 
 }
